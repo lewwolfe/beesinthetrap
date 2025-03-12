@@ -1,0 +1,36 @@
+---
+name: Build Game
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    name: Build Binaries
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        goos: [linux, windows]
+        goarch: [amd64]
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: stable
+      
+      - name: Build Application
+        run: |
+          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o beesinthetrap-${{ matrix.goos }}-${{ matrix.goarch }}
+      
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: beesinthetrap-${{ matrix.goos }}-${{ matrix.goarch }}
+          path: beesinthetrap-${{ matrix.goos }}-${{ matrix.goarch }}
