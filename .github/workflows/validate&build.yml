@@ -43,7 +43,7 @@ jobs:
       
       - name: Build Application
         run: |
-          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o beesinthetrap-${{ matrix.goos }}-${{ matrix.goarch }}
+          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o beesinthetrap-${{ matrix.goos }}-${{ matrix.goarch }} ./cmd/beesinthetrap
       
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
