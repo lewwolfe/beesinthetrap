@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/joho/godotenv"
+	"github.com/lewwolfe/beesinthetrap/internal/cli"
 	"github.com/lewwolfe/beesinthetrap/internal/config"
 	"github.com/lewwolfe/beesinthetrap/internal/game"
 )
@@ -17,5 +18,7 @@ func main() {
 
 	cfg := config.LoadConfig()
 	game := game.NewGame(cfg)
-	game.PlayerTurn()
+
+	gameCLI := cli.NewGameCLI(game)
+	gameCLI.Start()
 }

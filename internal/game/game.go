@@ -10,12 +10,12 @@ import (
 )
 
 type GameEngine struct {
-	config     *config.Config
+	Config     *config.Config
 	player     *Player
 	hive       []*Bee
 	playerTurn bool
-	playerHits int
-	beeStings  int
+	PlayerHits int
+	BeeStings  int
 	InputChan  chan string
 	OutputChan chan string
 	rng        *rand.Rand
@@ -31,11 +31,11 @@ func NewGame(cfg *config.Config) *GameEngine {
 	rng := rand.New(source)
 
 	ge := &GameEngine{
-		config:     cfg,
+		Config:     cfg,
 		player:     &Player{hp: cfg.PlayerHealth, missChance: cfg.PlayerMissChance},
 		playerTurn: true,
-		playerHits: 0,
-		beeStings:  0,
+		PlayerHits: 0,
+		BeeStings:  0,
 		InputChan:  make(chan string),
 		OutputChan: make(chan string),
 		rng:        rng,
@@ -77,6 +77,10 @@ func NewGame(cfg *config.Config) *GameEngine {
 	return ge
 }
 
+func (ge *GameEngine) IsPlayerTurn() bool {
+	return ge.playerTurn
+}
+
 func (ge *GameEngine) GetHive() []*Bee {
 	return ge.hive
 }
@@ -97,9 +101,7 @@ func (ge *GameEngine) Start(auto bool, ctx context.Context) {
 				ge.waitForPlayerAction()
 			}
 			ge.TakePlayerTurn()
-			fmt.Print(ge.HasGameFinished())
 		} else {
-			fmt.Printf("bee")
 			ge.TakeBeeTurn()
 		}
 
@@ -137,25 +139,25 @@ func (ge *GameEngine) HasGameFinished() bool {
 func (ge *GameEngine) TakePlayerTurn() {
 	// Let the player Attack() to see if they miss
 	if !ge.player.Attack(ge.rng) {
-		ge.OutputChan <- "Miss! You just missed the hive, better luck next time!"
+		ge.OutputChan <- "❌ Miss! You just missed the hive, better luck next time!"
 		return
 	}
 
 	//Select a random bee from the hive and damage it
-	ge.playerHits++
+	ge.PlayerHits++
 	beePos := ge.rng.Intn(len(ge.hive))
 	bee := ge.hive[beePos]
 
 	// Deal damage to the bee
 	beeDamage := bee.Hit()
-	ge.OutputChan <- fmt.Sprintf("Direct Hit! You dealt %d damage to a %s Bee.", beeDamage, bee.beeType)
+	ge.OutputChan <- fmt.Sprintf("🧑 Direct Hit! You dealt %d damage to a %s Bee.", beeDamage, bee.beeType)
 
 	// Check if bee is dead and which type of bee to update the hive
 	if bee.IsDead() && bee.beeType == "Queen" {
-		ge.OutputChan <- "The Queen Bee is dead, and the entire hive collapses!"
+		ge.OutputChan <- "🎉 The Queen Bee is dead, and the entire hive collapses!"
 		ge.ClearHive()
 	} else if bee.IsDead() {
-		ge.OutputChan <- fmt.Sprintf("You killed a %s!", bee.beeType)
+		ge.OutputChan <- fmt.Sprintf("💀 You killed a %s!", bee.beeType)
 		ge.hive = append(ge.hive[:beePos], ge.hive[beePos+1:]...)
 	}
 }
@@ -168,13 +170,14 @@ func (ge *GameEngine) TakeBeeTurn() {
 	// Let the bee Attack() to get damage
 	damage := bee.Attack(ge.rng)
 	if damage == 0 {
-		ge.OutputChan <- fmt.Sprintf("Buzz! That was close! The %s Bee just missed you!", bee.beeType)
+		ge.OutputChan <- fmt.Sprintf("❌ Buzz! That was close! The %s Bee just missed you!", bee.beeType)
 		return
 	}
 
 	// Run Sting() on player
 	ge.player.Sting(damage)
+	ge.BeeStings++
 
 	// Send out response from game to cli
-	ge.OutputChan <- fmt.Sprintf("Ouch! A %s Bee stung you for %d damage!", bee.beeType, damage)
+	ge.OutputChan <- fmt.Sprintf("🐝 Ouch! A %s Bee stung you for %d damage!", bee.beeType, damage)
 }

@@ -7,6 +7,8 @@ import (
 
 type Config struct {
 	PlayerHealth          int
+	LogSize               int
+	AutoRunSpeed          int
 	RandomSeed            int64
 	PlayerMissChance      float64
 	BeeMissChance         float64
@@ -30,10 +32,12 @@ func LoadConfig() *Config {
 	// Player
 	config.PlayerHealth = getEnvAsInt("PLAYER_HEALTH", 100)
 
-	//Randomness
+	//Game Options
 	config.RandomSeed = int64(getEnvAsInt("RANDOM_SEED", 0))
 	config.PlayerMissChance = getEnvAsFloat("PLAYER_MISS_CHANCE", 0.1)
 	config.BeeMissChance = getEnvAsFloat("BEE_MISS_CHANCE", 0.2)
+	config.LogSize = getEnvAsInt("LOG_SIZE", 10)
+	config.AutoRunSpeed = getEnvAsInt("AUTO_RUN_SPEED", 1)
 
 	// Queen Bee
 	config.QueenBeeAmount = getEnvAsInt("QUEEN_BEE_AMOUNT", 1)
