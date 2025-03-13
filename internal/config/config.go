@@ -6,21 +6,21 @@ import (
 )
 
 type Config struct {
-	PlayerHealth           int
-	PlayerMissChance       float64
-	BeeMissChance          float64
-	QueenBeeAmount         int
-	QueenBeeHealth         int
-	QueenBeeAttackDamage   int
-	QueenBeeDefenseDamage  int
-	WorkerBeeAmount        int
-	WorkerBeeHealth        int
-	WorkerBeeAttackDamage  int
-	WorkerBeeDefenseDamage int
-	DroneBeeAmount         int
-	DroneBeeHealth         int
-	DroneBeeAttackDamage   int
-	DroneBeeDefenseDamage  int
+	PlayerHealth          int
+	PlayerMissChance      float64
+	BeeMissChance         float64
+	QueenBeeAmount        int
+	QueenBeeHealth        int
+	QueenBeeAttackDamage  int
+	QueenBeeHitDamage     int
+	WorkerBeeAmount       int
+	WorkerBeeHealth       int
+	WorkerBeeAttackDamage int
+	WorkerBeeHitDamage    int
+	DroneBeeAmount        int
+	DroneBeeHealth        int
+	DroneBeeAttackDamage  int
+	DroneBeeHitDamage     int
 }
 
 func LoadConfig() *Config {
@@ -35,19 +35,19 @@ func LoadConfig() *Config {
 	config.QueenBeeAmount = getEnvAsInt("QUEEN_BEE_AMOUNT", 1)
 	config.QueenBeeHealth = getEnvAsInt("QUEEN_BEE_HEALTH", 100)
 	config.QueenBeeAttackDamage = getEnvAsInt("QUEEN_BEE_ATTACK_DAMAGE", 10)
-	config.QueenBeeDefenseDamage = getEnvAsInt("QUEEN_BEE_DEFENSE_DAMAGE", 10)
+	config.QueenBeeHitDamage = getEnvAsInt("QUEEN_BEE_DEFENSE_DAMAGE", 10)
 
 	// Worker Bee
 	config.WorkerBeeAmount = getEnvAsInt("WORKER_BEE_AMOUNT", 5)
 	config.WorkerBeeHealth = getEnvAsInt("WORKER_BEE_HEALTH", 75)
 	config.WorkerBeeAttackDamage = getEnvAsInt("WORKER_BEE_ATTACK_DAMAGE", 5)
-	config.WorkerBeeDefenseDamage = getEnvAsInt("WORKER_BEE_DEFENSE_DAMAGE", 25)
+	config.WorkerBeeHitDamage = getEnvAsInt("WORKER_BEE_DEFENSE_DAMAGE", 25)
 
 	// Drone Bee
 	config.DroneBeeAmount = getEnvAsInt("DRONE_BEE_AMOUNT", 25)
 	config.DroneBeeHealth = getEnvAsInt("DRONE_BEE_HEALTH", 60)
 	config.DroneBeeAttackDamage = getEnvAsInt("DRONE_BEE_ATTACK_DAMAGE", 1)
-	config.DroneBeeDefenseDamage = getEnvAsInt("DRONE_BEE_DEFENSE_DAMAGE", 30)
+	config.DroneBeeHitDamage = getEnvAsInt("DRONE_BEE_DEFENSE_DAMAGE", 30)
 
 	return config
 }

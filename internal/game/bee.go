@@ -1,28 +1,35 @@
 package game
 
+import "math/rand/v2"
+
 type Bee struct {
-	Type          string
-	HP            int
-	AttackDamage  int
-	DefenceDamage int
-	MissChance    float64
+	beeType      string
+	hp           int
+	attackDamage int
+	hitDamage    int
+	missChance   float64
 }
 
-func (b *Bee) Attack(player *Player) {
+func (b *Bee) Attack() int {
+	if rand.Float64() < b.missChance {
+		return 0
+	}
+	return b.attackDamage
 }
 
-func (b *Bee) TakeDamage(damage int) {
-	b.HP -= damage
+func (b *Bee) Hit() int {
+	b.hp -= b.hitDamage
+	return b.hitDamage
 }
 
 func (b *Bee) IsDead() bool {
-	return b.HP <= 0
+	return b.hp <= 0
 }
 
-func (b *Bee) GetType() string {
-	return b.Type
+func (b *Bee) GetBeeType() string {
+	return b.beeType
 }
 
 func (b *Bee) GetHP() int {
-	return b.HP
+	return b.hp
 }
