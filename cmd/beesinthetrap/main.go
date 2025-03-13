@@ -1,11 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/joho/godotenv"
 	"github.com/lewwolfe/beesinthetrap/internal/config"
+	"github.com/lewwolfe/beesinthetrap/internal/game"
 )
 
 func main() {
@@ -15,6 +15,7 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	config := config.LoadConfig()
-	fmt.Println(config.QueenBeeAmount)
+	cfg := config.LoadConfig()
+	game := game.NewGame(cfg)
+	game.PlayerTurn()
 }
