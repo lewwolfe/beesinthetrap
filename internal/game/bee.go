@@ -11,10 +11,11 @@ type Bee struct {
 }
 
 func (b *Bee) Attack(rng *rand.Rand) int {
-	if rng.Float64() < b.missChance {
-		return 0
+	if rng.Float64() > b.missChance {
+		return b.attackDamage
 	}
-	return b.attackDamage
+	return 0
+
 }
 
 func (b *Bee) Hit() int {

@@ -1,6 +1,8 @@
 package game
 
-import "math/rand"
+import (
+	"math/rand"
+)
 
 type Player struct {
 	hp         int
@@ -8,7 +10,7 @@ type Player struct {
 }
 
 func (p *Player) Attack(rng *rand.Rand) bool {
-	return rng.Float64() < p.missChance
+	return rng.Float64() > p.missChance
 }
 
 func (p *Player) Sting(damage int) {
@@ -19,6 +21,6 @@ func (p *Player) IsDead() bool {
 	return p.hp <= 0
 }
 
-func (p *Player) Gethp() int {
+func (p *Player) GetHP() int {
 	return p.hp
 }

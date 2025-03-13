@@ -12,7 +12,7 @@ import (
 type GameEngine struct {
 	config     *config.Config
 	player     *Player
-	hive       []Bee
+	hive       []*Bee
 	playerTurn bool
 	playerHits int
 	beeStings  int
@@ -43,7 +43,7 @@ func NewGame(cfg *config.Config) *GameEngine {
 
 	// Spawn worker bees
 	for i := 0; i < cfg.WorkerBeeAmount; i++ {
-		ge.hive = append(ge.hive, Bee{
+		ge.hive = append(ge.hive, &Bee{
 			beeType:      "Worker",
 			hp:           cfg.WorkerBeeHealth,
 			attackDamage: cfg.WorkerBeeAttackDamage,
@@ -54,7 +54,7 @@ func NewGame(cfg *config.Config) *GameEngine {
 
 	// Spawn drone bees
 	for i := 0; i < cfg.DroneBeeAmount; i++ {
-		ge.hive = append(ge.hive, Bee{
+		ge.hive = append(ge.hive, &Bee{
 			beeType:      "Drone",
 			hp:           cfg.DroneBeeHealth,
 			attackDamage: cfg.DroneBeeAttackDamage,
@@ -65,7 +65,7 @@ func NewGame(cfg *config.Config) *GameEngine {
 
 	// Spawn Queen bee(s)
 	for i := 0; i < cfg.QueenBeeAmount; i++ {
-		ge.hive = append(ge.hive, Bee{
+		ge.hive = append(ge.hive, &Bee{
 			beeType:      "Queen",
 			hp:           cfg.QueenBeeHealth,
 			attackDamage: cfg.QueenBeeAttackDamage,
@@ -77,6 +77,18 @@ func NewGame(cfg *config.Config) *GameEngine {
 	return ge
 }
 
+func (ge *GameEngine) GetHive() []*Bee {
+	return ge.hive
+}
+
+func (ge *GameEngine) GetPlayer() *Player {
+	return ge.player
+}
+
+func (ge *GameEngine) ClearHive() {
+	ge.hive = []*Bee{}
+}
+
 // Start runs the game loop, handling turns and input
 func (ge *GameEngine) Start(auto bool, ctx context.Context) {
 	for !ge.HasGameFinished() {
@@ -85,7 +97,9 @@ func (ge *GameEngine) Start(auto bool, ctx context.Context) {
 				ge.waitForPlayerAction()
 			}
 			ge.TakePlayerTurn()
+			fmt.Print(ge.HasGameFinished())
 		} else {
+			fmt.Printf("bee")
 			ge.TakeBeeTurn()
 		}
 
@@ -121,7 +135,6 @@ func (ge *GameEngine) HasGameFinished() bool {
 
 // Wait for input chan to recieve a player input
 func (ge *GameEngine) TakePlayerTurn() {
-
 	// Let the player Attack() to see if they miss
 	if !ge.player.Attack(ge.rng) {
 		ge.OutputChan <- "Miss! You just missed the hive, better luck next time!"
@@ -140,7 +153,7 @@ func (ge *GameEngine) TakePlayerTurn() {
 	// Check if bee is dead and which type of bee to update the hive
 	if bee.IsDead() && bee.beeType == "Queen" {
 		ge.OutputChan <- "The Queen Bee is dead, and the entire hive collapses!"
-		ge.hive = []Bee{}
+		ge.ClearHive()
 	} else if bee.IsDead() {
 		ge.OutputChan <- fmt.Sprintf("You killed a %s!", bee.beeType)
 		ge.hive = append(ge.hive[:beePos], ge.hive[beePos+1:]...)
