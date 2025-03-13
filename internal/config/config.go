@@ -6,6 +6,9 @@ import (
 )
 
 type Config struct {
+	PlayerHealth           int
+	PlayerMissChance       float64
+	BeeMissChance          float64
 	QueenBeeAmount         int
 	QueenBeeHealth         int
 	QueenBeeAttackDamage   int
@@ -22,6 +25,11 @@ type Config struct {
 
 func LoadConfig() *Config {
 	config := new(Config)
+
+	// Player
+	config.PlayerHealth = getEnvAsInt("PLAYER_HEALTH", 100)
+	config.PlayerMissChance = getEnvAsFloat("PLAYER_MISS_CHANCE", 0.1)
+	config.BeeMissChance = getEnvAsFloat("BEE_MISS_CHANCE", 0.2)
 
 	// Queen Bee
 	config.QueenBeeAmount = getEnvAsInt("QUEEN_BEE_AMOUNT", 1)
@@ -44,7 +52,7 @@ func LoadConfig() *Config {
 	return config
 }
 
-func getEnv(key string, defaultVal string) string {
+func getEnvAsString(key string, defaultVal string) string {
 	if value, exists := os.LookupEnv(key); exists {
 		return value
 	}
@@ -62,5 +70,19 @@ func getEnvAsInt(key string, defaultVal int) int {
 		return defaultVal
 	}
 	return intValue
+
+}
+
+func getEnvAsFloat(key string, defaultVal float64) float64 {
+	value, exists := os.LookupEnv(key)
+	if !exists {
+		return defaultVal
+	}
+
+	floatValue, err := strconv.ParseFloat(value, 64)
+	if err != nil {
+		return defaultVal
+	}
+	return floatValue
 
 }

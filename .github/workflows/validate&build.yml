@@ -51,19 +51,19 @@ jobs:
           name: beesinthetrap-${{ matrix.goos }}-${{ matrix.goarch }}
           path: beesinthetrap-${{ matrix.goos }}-${{ matrix.goarch }}
 
-  release:
-    name: Create GitHub Release
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+  # release:
+  #   name: Create GitHub Release
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout Code
+  #       uses: actions/checkout@v4
       
-      - name: Download Build Artifacts
-        uses: actions/download-artifact@v4
+  #     - name: Download Build Artifacts
+  #       uses: actions/download-artifact@v4
       
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ github.ref_name }}
-          files: "beesinthetrap-*"
+  #     - name: Create GitHub Release
+  #       uses: softprops/action-gh-release@v2
+  #       with:
+  #         tag_name: ${{ github.ref_name }}
+  #         files: "beesinthetrap-*"
