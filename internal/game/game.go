@@ -3,7 +3,8 @@ package game
 import (
 	"context"
 	"fmt"
-	"math/rand/v2"
+	"math/rand"
+	"time"
 
 	"github.com/lewwolfe/beesinthetrap/internal/config"
 )
@@ -17,9 +18,18 @@ type GameEngine struct {
 	beeStings  int
 	InputChan  chan string
 	OutputChan chan string
+	rng        *rand.Rand
 }
 
 func NewGame(cfg *config.Config) *GameEngine {
+	//Input a random seed for randomness, this allows for repetable games for testing
+	seed := cfg.RandomSeed
+	if seed == 0 {
+		seed = time.Now().Unix()
+	}
+	source := rand.NewSource(seed)
+	rng := rand.New(source)
+
 	ge := &GameEngine{
 		config:     cfg,
 		player:     &Player{hp: cfg.PlayerHealth, missChance: cfg.PlayerMissChance},
@@ -28,6 +38,7 @@ func NewGame(cfg *config.Config) *GameEngine {
 		beeStings:  0,
 		InputChan:  make(chan string),
 		OutputChan: make(chan string),
+		rng:        rng,
 	}
 
 	// Spawn worker bees
@@ -112,14 +123,14 @@ func (ge *GameEngine) HasGameFinished() bool {
 func (ge *GameEngine) TakePlayerTurn() {
 
 	// Let the player Attack() to see if they miss
-	if !ge.player.Attack() {
+	if !ge.player.Attack(ge.rng) {
 		ge.OutputChan <- "Miss! You just missed the hive, better luck next time!"
 		return
 	}
 
 	//Select a random bee from the hive and damage it
 	ge.playerHits++
-	beePos := rand.IntN(len(ge.hive))
+	beePos := ge.rng.Intn(len(ge.hive))
 	bee := ge.hive[beePos]
 
 	// Deal damage to the bee
@@ -138,11 +149,11 @@ func (ge *GameEngine) TakePlayerTurn() {
 
 func (ge *GameEngine) TakeBeeTurn() {
 	// Select random bee from the hive
-	beePos := rand.IntN(len(ge.hive))
+	beePos := ge.rng.Intn(len(ge.hive))
 	bee := ge.hive[beePos]
 
 	// Let the bee Attack() to get damage
-	damage := bee.Attack()
+	damage := bee.Attack(ge.rng)
 	if damage == 0 {
 		ge.OutputChan <- fmt.Sprintf("Buzz! That was close! The %s Bee just missed you!", bee.beeType)
 		return

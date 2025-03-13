@@ -1,14 +1,14 @@
 package game
 
-import "math/rand/v2"
+import "math/rand"
 
 type Player struct {
 	hp         int
 	missChance float64
 }
 
-func (p *Player) Attack() bool {
-	return rand.Float64() < p.missChance
+func (p *Player) Attack(rng *rand.Rand) bool {
+	return rng.Float64() < p.missChance
 }
 
 func (p *Player) Sting(damage int) {

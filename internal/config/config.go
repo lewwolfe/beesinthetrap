@@ -7,6 +7,7 @@ import (
 
 type Config struct {
 	PlayerHealth          int
+	RandomSeed            int64
 	PlayerMissChance      float64
 	BeeMissChance         float64
 	QueenBeeAmount        int
@@ -28,6 +29,9 @@ func LoadConfig() *Config {
 
 	// Player
 	config.PlayerHealth = getEnvAsInt("PLAYER_HEALTH", 100)
+
+	//Randomness
+	config.RandomSeed = int64(getEnvAsInt("RANDOM_SEED", 0))
 	config.PlayerMissChance = getEnvAsFloat("PLAYER_MISS_CHANCE", 0.1)
 	config.BeeMissChance = getEnvAsFloat("BEE_MISS_CHANCE", 0.2)
 
@@ -50,13 +54,6 @@ func LoadConfig() *Config {
 	config.DroneBeeHitDamage = getEnvAsInt("DRONE_BEE_DEFENSE_DAMAGE", 30)
 
 	return config
-}
-
-func getEnvAsString(key string, defaultVal string) string {
-	if value, exists := os.LookupEnv(key); exists {
-		return value
-	}
-	return defaultVal
 }
 
 func getEnvAsInt(key string, defaultVal int) int {

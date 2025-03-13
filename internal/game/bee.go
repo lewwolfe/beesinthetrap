@@ -1,6 +1,6 @@
 package game
 
-import "math/rand/v2"
+import "math/rand"
 
 type Bee struct {
 	beeType      string
@@ -10,8 +10,8 @@ type Bee struct {
 	missChance   float64
 }
 
-func (b *Bee) Attack() int {
-	if rand.Float64() < b.missChance {
+func (b *Bee) Attack(rng *rand.Rand) int {
+	if rng.Float64() < b.missChance {
 		return 0
 	}
 	return b.attackDamage
