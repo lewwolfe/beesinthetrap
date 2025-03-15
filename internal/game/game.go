@@ -9,16 +9,25 @@ import (
 	"github.com/lewwolfe/beesinthetrap/internal/config"
 )
 
+type GameState int
+
+const (
+	Running GameState = iota
+	PlayerWin
+	PlayerLose
+)
+
 type GameEngine struct {
-	Config     *config.Config
-	player     *Player
-	hive       []*Bee
-	playerTurn bool
-	PlayerHits int
-	BeeStings  int
-	InputChan  chan string
-	OutputChan chan string
-	rng        *rand.Rand
+	Config        *config.Config
+	player        *Player
+	hive          []*Bee
+	playerTurn    bool
+	PlayerHits    int
+	BeeStings     int
+	InputChan     chan string
+	OutputChan    chan string
+	GameStateChan chan GameState
+	rng           *rand.Rand
 }
 
 func NewGame(cfg *config.Config) *GameEngine {
@@ -31,14 +40,15 @@ func NewGame(cfg *config.Config) *GameEngine {
 	rng := rand.New(source)
 
 	ge := &GameEngine{
-		Config:     cfg,
-		player:     &Player{hp: cfg.PlayerHealth, missChance: cfg.PlayerMissChance},
-		playerTurn: true,
-		PlayerHits: 0,
-		BeeStings:  0,
-		InputChan:  make(chan string),
-		OutputChan: make(chan string),
-		rng:        rng,
+		Config:        cfg,
+		player:        &Player{hp: cfg.PlayerHealth, missChance: cfg.PlayerMissChance},
+		playerTurn:    true,
+		PlayerHits:    0,
+		BeeStings:     0,
+		InputChan:     make(chan string),
+		OutputChan:    make(chan string),
+		GameStateChan: make(chan GameState, 1),
+		rng:           rng,
 	}
 
 	// Spawn worker bees
@@ -95,18 +105,35 @@ func (ge *GameEngine) ClearHive() {
 
 // Start runs the game loop, handling turns and input
 func (ge *GameEngine) Start(auto bool, ctx context.Context) {
-	for !ge.HasGameFinished() {
-		if ge.playerTurn {
-			if !auto {
-				ge.waitForPlayerAction()
+	defer ctx.Done()
+	// Main game loop
+	for !ge.IsGameFinished() {
+		select {
+		case <-ctx.Done():
+			return
+		default:
+			// Existing game logic
+			if ge.playerTurn {
+				if !auto {
+					ge.waitForPlayerAction()
+				}
+				ge.TakePlayerTurn()
+			} else {
+				ge.TakeBeeTurn()
 			}
-			ge.TakePlayerTurn()
-		} else {
-			ge.TakeBeeTurn()
-		}
 
-		// Toggle turn
-		ge.playerTurn = !ge.playerTurn
+			// Toggle turn
+			ge.playerTurn = !ge.playerTurn
+		}
+	}
+
+	// Send final game state messages
+	if ge.player.IsDead() {
+		ge.OutputChan <- "💀 You have been defeated by the hive!"
+		ge.GameStateChan <- PlayerLose
+	} else {
+		ge.OutputChan <- "🏆 Congratulations! You've destroyed the entire hive!"
+		ge.GameStateChan <- PlayerWin
 	}
 }
 
@@ -124,12 +151,9 @@ func (ge *GameEngine) waitForPlayerAction() {
 	}
 }
 
-func (ge *GameEngine) HasGameFinished() bool {
-	if ge.player.IsDead() {
-		// Bee win logic
-		return true
-	} else if len(ge.hive) == 0 {
-		// Player win logic
+func (ge *GameEngine) IsGameFinished() bool {
+	if ge.player.IsDead() || len(ge.hive) == 0 {
+
 		return true
 	}
 	return false

@@ -117,9 +117,9 @@ func TestHasGameFinished(t *testing.T) {
 				ge.ClearHive()
 			}
 
-			result := ge.HasGameFinished()
+			result := ge.IsGameFinished()
 			if result != tt.expectedResult {
-				t.Errorf("HasGameFinished() = %v, want %v", result, tt.expectedResult)
+				t.Errorf("IsGameFinished() = %v, want %v", result, tt.expectedResult)
 			}
 		})
 	}
@@ -251,7 +251,7 @@ func TestQueenBeeKill(t *testing.T) {
 	// Take a player turn which should kill the queen
 	ge.TakePlayerTurn()
 
-	if !ge.HasGameFinished() {
+	if !ge.IsGameFinished() {
 		t.Errorf("Game should have ended when Queen Bee died")
 	}
 
@@ -316,7 +316,7 @@ func TestGameLoop(t *testing.T) {
 	}
 
 	// Verify game is finished
-	if !ge.HasGameFinished() {
+	if !ge.IsGameFinished() {
 		t.Errorf("Expected game to be finished")
 	}
 }
