@@ -18,30 +18,32 @@ A turn-based command-line game where you battle against a hive of bees. Destroy 
 
 ### Pre-compiled Binaries
 
-Download the latest release for your platform from the [Releases](https://github.com/lewwolfe/beesinthetrap/releases) page - v1.0.0.
+Download the latest release for your platform from the [Releases](https://github.com/lewwolfe/beesinthetrap/releases) page.
 
 ### Build from Source
 
 1. Clone the repository
-```
+```sh
 git clone https://github.com/lewwolfe/beesinthetrap.git
 cd beesinthetrap
 ```
 
 2. Build the project
-```
+```sh
 make build
 ```
 
 ## Usage
 
+First copy the [.env.template](./.env.template) and name it `.env` and populate the values accordingly, then:
+
 Run the game (pick with OS you are running) :
-```
+```sh
 ./beesinthetrap-[windows/linux]-amd64
 ```
 
 Or using make:
-```
+```sh
 make run
 ```
 
@@ -76,21 +78,12 @@ beesinthetrap/
 ├── cmd/
 │   └── beesinthetrap/
 │       └── main.go       # Application entry point
-├── cli/
-│   ├── cli.go            # Handle all the inputs and output logic
-│   └── messages.go       # Display message to CLI
-├── config/
-│   └── config.go         # Game configuration
 ├── game/
 │   ├── bee.go            # Bee types and behavior
-│   ├── game.go           # Game engine
+│   ├── engine.go         # Game engine
 │   └── player.go         # Player implementation
 ├── .github/
 │   └── workflows/        # GitHub Actions workflows
 ├── Makefile              # Build automation
 └── README.md             # This file
 ```
-
-## License
-
-[MIT](LICENSE)
