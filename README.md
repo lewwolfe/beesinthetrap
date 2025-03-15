@@ -18,7 +18,7 @@ A turn-based command-line game where you battle against a hive of bees. Destroy 
 
 ### Pre-compiled Binaries
 
-Download the latest release for your platform from the [Releases](https://github.com/lewwolfe/beesinthetrap/releases) page.
+Download the latest release for your platform from the [Releases](https://github.com/lewwolfe/beesinthetrap/releases) page - v1.0.0.
 
 ### Build from Source
 
