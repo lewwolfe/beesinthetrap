@@ -24,7 +24,7 @@ Download the latest release for your platform from the [Releases](https://github
 
 1. Clone the repository
 ```
-git clone https://github.com/yourusername/beesinthetrap.git
+git clone https://github.com/beesinthetrap/beesinthetrap.git
 cd beesinthetrap
 ```
 
