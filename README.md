@@ -83,7 +83,7 @@ beesinthetrap/
 │   └── config.go         # Game configuration
 ├── game/
 │   ├── bee.go            # Bee types and behavior
-│   ├── engine.go         # Game engine
+│   ├── game.go           # Game engine
 │   └── player.go         # Player implementation
 ├── .github/
 │   └── workflows/        # GitHub Actions workflows
