@@ -89,15 +89,11 @@ func (c *GameCLI) runGame() {
 	case <-ctx.Done():
 		return
 	case gameState := <-c.gameEngine.GameStateChan:
-		// Small delay to ensure all messages are processed
 		time.Sleep(200 * time.Millisecond)
-
-		// Display game over with appropriate message based on game state
 		c.displayGameOver(gameState)
 		ctx.Done()
 	}
 
-	// Wait for all goroutines to exit
 	wg.Wait()
 }
 
