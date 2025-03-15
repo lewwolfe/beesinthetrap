@@ -87,7 +87,7 @@ func (c *GameCLI) runGame() {
 	// Wait for game state event
 	select {
 	case <-ctx.Done():
-		// Context was cancelled, game interrupted
+		return
 	case gameState := <-c.gameEngine.GameStateChan:
 		// Small delay to ensure all messages are processed
 		time.Sleep(200 * time.Millisecond)
@@ -95,7 +95,6 @@ func (c *GameCLI) runGame() {
 		// Display game over with appropriate message based on game state
 		c.displayGameOver(gameState)
 		ctx.Done()
-		cancel()
 	}
 
 	// Wait for all goroutines to exit
