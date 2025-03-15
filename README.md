@@ -76,6 +76,11 @@ beesinthetrap/
 ├── cmd/
 │   └── beesinthetrap/
 │       └── main.go       # Application entry point
+├── cli/
+│   ├── cli.go            # Handle all the inputs and output logic
+│   └── messages.go       # Display message to CLI
+├── config/
+│   └── config.go         # Game configuration
 ├── game/
 │   ├── bee.go            # Bee types and behavior
 │   ├── engine.go         # Game engine
