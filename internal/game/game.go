@@ -44,7 +44,7 @@ func NewGame(cfg *config.Config) *GameEngine {
 	// Spawn worker bees
 	for i := 0; i < cfg.WorkerBeeAmount; i++ {
 		ge.hive = append(ge.hive, &Bee{
-			beeType:      "Worker",
+			beeType:      WorkerBee,
 			hp:           cfg.WorkerBeeHealth,
 			attackDamage: cfg.WorkerBeeAttackDamage,
 			hitDamage:    cfg.WorkerBeeHitDamage,
@@ -55,7 +55,7 @@ func NewGame(cfg *config.Config) *GameEngine {
 	// Spawn drone bees
 	for i := 0; i < cfg.DroneBeeAmount; i++ {
 		ge.hive = append(ge.hive, &Bee{
-			beeType:      "Drone",
+			beeType:      DroneBee,
 			hp:           cfg.DroneBeeHealth,
 			attackDamage: cfg.DroneBeeAttackDamage,
 			hitDamage:    cfg.DroneBeeHitDamage,
@@ -66,7 +66,7 @@ func NewGame(cfg *config.Config) *GameEngine {
 	// Spawn Queen bee(s)
 	for i := 0; i < cfg.QueenBeeAmount; i++ {
 		ge.hive = append(ge.hive, &Bee{
-			beeType:      "Queen",
+			beeType:      QueenBee,
 			hp:           cfg.QueenBeeHealth,
 			attackDamage: cfg.QueenBeeAttackDamage,
 			hitDamage:    cfg.QueenBeeHitDamage,
@@ -153,12 +153,15 @@ func (ge *GameEngine) TakePlayerTurn() {
 	ge.OutputChan <- fmt.Sprintf("🧑 Direct Hit! You dealt %d damage to a %s Bee.", beeDamage, bee.beeType)
 
 	// Check if bee is dead and which type of bee to update the hive
-	if bee.IsDead() && bee.beeType == "Queen" {
+	if bee.IsDead() && bee.beeType == QueenBee {
 		ge.OutputChan <- "🎉 The Queen Bee is dead, and the entire hive collapses!"
 		ge.ClearHive()
 	} else if bee.IsDead() {
 		ge.OutputChan <- fmt.Sprintf("💀 You killed a %s!", bee.beeType)
-		ge.hive = append(ge.hive[:beePos], ge.hive[beePos+1:]...)
+
+		// Swap with the last element and shrink the slice
+		ge.hive[beePos] = ge.hive[len(ge.hive)-1]
+		ge.hive = ge.hive[:len(ge.hive)-1]
 	}
 }
 

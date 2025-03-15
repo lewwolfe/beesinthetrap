@@ -8,7 +8,7 @@ import (
 // TestBeeAttack tests basic attack functionality of a Bee
 func TestBeeAttack(t *testing.T) {
 	alwaysHitBee := &Bee{
-		beeType:      "Worker",
+		beeType:      WorkerBee,
 		hp:           10,
 		attackDamage: 5,
 		missChance:   0,
@@ -25,7 +25,7 @@ func TestBeeAttack(t *testing.T) {
 
 	// Test bee always misses
 	alwaysMissBee := &Bee{
-		beeType:      "Worker",
+		beeType:      WorkerBee,
 		hp:           10,
 		attackDamage: 5,
 		missChance:   1,
@@ -40,7 +40,7 @@ func TestBeeAttack(t *testing.T) {
 // TestBeeHit tests that a bee takes the right amount of damage
 func TestBeeHit(t *testing.T) {
 	bee := &Bee{
-		beeType:   "Worker",
+		beeType:   WorkerBee,
 		hp:        10,
 		hitDamage: 3,
 	}
@@ -58,7 +58,7 @@ func TestBeeHit(t *testing.T) {
 // TestBeeIsDead tests that a bee correctly reports when it's dead
 func TestBeeIsDead(t *testing.T) {
 	aliveBee := &Bee{
-		beeType: "Worker",
+		beeType: WorkerBee,
 		hp:      5,
 	}
 
@@ -68,7 +68,7 @@ func TestBeeIsDead(t *testing.T) {
 
 	// Test bee with exactly 0 HP
 	deadBee := &Bee{
-		beeType: "Worker",
+		beeType: WorkerBee,
 		hp:      0,
 	}
 
@@ -78,7 +78,7 @@ func TestBeeIsDead(t *testing.T) {
 
 	// Test bee with negative HP
 	veryDeadBee := &Bee{
-		beeType: "Worker",
+		beeType: WorkerBee,
 		hp:      -2,
 	}
 

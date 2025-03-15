@@ -1,1 +1,9 @@
+beesinthetrap*
+*.exe
+*.exe~
 .env
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store

@@ -3,6 +3,7 @@ package game_test
 import (
 	"context"
 	"fmt"
+	"strings"
 	"testing"
 	"time"
 
@@ -133,7 +134,7 @@ func TestTakePlayerTurn(t *testing.T) {
 		WorkerBeeAttackDamage: 5,
 		WorkerBeeHitDamage:    8,
 		BeeMissChance:         0,
-		RandomSeed:            int64(42),
+		RandomSeed:            42,
 	}
 
 	ge := game.NewGame(cfg)
@@ -161,7 +162,7 @@ func TestTakePlayerTurn(t *testing.T) {
 	}
 
 	// Check if the first message indicates a hit
-	if outputMessages[0][:11] != "Direct Hit!" {
+	if !strings.Contains(outputMessages[0], "Direct Hit!") {
 		t.Errorf("Expected player to hit, got message: %s", outputMessages[0])
 	}
 
@@ -180,7 +181,7 @@ func TestTakeBeeTurn(t *testing.T) {
 		WorkerBeeAttackDamage: 5,
 		WorkerBeeHitDamage:    8,
 		BeeMissChance:         0,
-		RandomSeed:            int64(42),
+		RandomSeed:            42,
 	}
 
 	ge := game.NewGame(cfg)
@@ -209,7 +210,7 @@ func TestTakeBeeTurn(t *testing.T) {
 	}
 
 	// Check if the message indicates a sting
-	if outputMessages[0][:5] != "Ouch!" {
+	if !strings.Contains(outputMessages[0], "Ouch!") {
 		t.Errorf("Expected bee to sting, got message: %s", outputMessages[0])
 	}
 
@@ -250,6 +251,10 @@ func TestQueenBeeKill(t *testing.T) {
 	// Take a player turn which should kill the queen
 	ge.TakePlayerTurn()
 
+	if !ge.HasGameFinished() {
+		t.Errorf("Game should have ended when Queen Bee died")
+	}
+
 	// Stop reading from OutputChan
 	done <- true
 
@@ -262,7 +267,7 @@ func TestQueenBeeKill(t *testing.T) {
 	// Check for queen death message
 	queenDeathMessageFound := false
 	for _, msg := range outputMessages {
-		if msg == "The Queen Bee is dead, and the entire hive collapses!" {
+		if strings.Contains(msg, "The Queen Bee is dead, and the entire hive collapses!") {
 			queenDeathMessageFound = true
 			break
 		}
@@ -300,7 +305,7 @@ func TestGameLoop(t *testing.T) {
 	done := make(chan bool)
 	go func() {
 		ge.Start(true, ctx)
-		done <- true
+		close(done)
 	}()
 
 	// Wait for game to finish or timeout

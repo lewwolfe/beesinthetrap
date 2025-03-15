@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"time"
+
+	"github.com/lewwolfe/beesinthetrap/internal/game"
 )
 
 func (c *GameCLI) displayWelcomeBanner() {
@@ -59,14 +61,14 @@ func (c *GameCLI) displayGameOver() {
 	fmt.Printf("Player Hits: %d\n", c.gameEngine.PlayerHits)
 
 	if len(c.gameEngine.GetHive()) > 0 {
-		beeTypes := make(map[string]int)
+		beeTypes := make(map[game.BeeType]int)
 		for _, bee := range c.gameEngine.GetHive() {
 			beeTypes[bee.GetBeeType()]++
 		}
 
 		fmt.Println("\nRemaining bees:")
 		for beeType, count := range beeTypes {
-			fmt.Printf("- %s: %d\n", beeType, count)
+			fmt.Printf("- %s: %d\n", beeType.String(), count)
 		}
 	}
 

@@ -3,11 +3,24 @@ package game
 import "math/rand"
 
 type Bee struct {
-	beeType      string
+	beeType      BeeType
 	hp           int
 	attackDamage int
 	hitDamage    int
 	missChance   float64
+}
+
+type BeeType int
+
+// Enum(ish) representation of bee types
+const (
+	QueenBee BeeType = iota
+	WorkerBee
+	DroneBee
+)
+
+func (bt BeeType) String() string {
+	return [...]string{"Queen", "Worker", "Drone"}[bt]
 }
 
 func (b *Bee) Attack(rng *rand.Rand) int {
@@ -27,7 +40,7 @@ func (b *Bee) IsDead() bool {
 	return b.hp <= 0
 }
 
-func (b *Bee) GetBeeType() string {
+func (b *Bee) GetBeeType() BeeType {
 	return b.beeType
 }
 
